@@ -1,7 +1,25 @@
+use std::sync::mpsc;
 use std::thread;
-use std::time::Duration;
+use std::time::Duration; // Multiple Producer Single Consumer
 
 fn main() {
+    channels();
+    threads();
+}
+
+fn channels() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        let val = String::from("hi");
+        tx.send(val).unwrap();
+    });
+
+    let received = rx.recv().unwrap();
+    println!("Got: {}", received);
+}
+
+fn threads() {
     let handle = thread::spawn(|| {
         for i in 1..10 {
             println!("hi number {} from the spawned thread!", i);
